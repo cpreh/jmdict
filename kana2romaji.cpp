@@ -1,0 +1,362 @@
+/*
+jmdict, a frontend to the JMdict file. http://mandrill.fuxx0r.net/jmdict.php
+Copyright (C) 2004 Florian Bluemel (florian.bluemel@uni-dortmund.de)
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+// encoding: utf-8
+#include "kana2romaji.h"
+#include <map>
+#include <iostream>
+#include <ostream>
+#include <string>
+
+using namespace std;
+
+namespace  {
+void utfchar(const string& from, string::size_type pos, string& to) {
+    string::value_type first = from[pos];
+    if ((first & 0x80) == 0)
+        to = from[pos];
+    else {
+        string::size_type len = 0;
+        while (first & 0x80) {
+            ++len;
+	    first <<= 1;
+	}
+        to = from.substr(pos, len);
+    }
+}
+}
+
+typedef map<string, string> romaji_map;
+romaji_map romaji;
+
+void initRomaji() {
+    // -- hiragana -----
+    romaji["あ"] = "a";
+    romaji["い"] = "i";
+    romaji["う"] = "u";
+    romaji["え"] = "e";
+    romaji["お"] = "o";    
+    romaji["か"] = "ka";
+    romaji["き"] = "ki";
+    romaji["く"] = "ku";
+    romaji["け"] = "ke";
+    romaji["こ"] = "ko";
+    romaji["さ"] = "sa";
+    romaji["し"] = "shi";
+    romaji["す"] = "su";
+    romaji["せ"] = "se";
+    romaji["そ"] = "so";
+    romaji["た"] = "ta";
+    romaji["ち"] = "chi";
+    romaji["つ"] = "tsu";
+    romaji["て"] = "te";
+    romaji["と"] = "to";
+    romaji["な"] = "na";
+    romaji["に"] = "ni";
+    romaji["ぬ"] = "nu";
+    romaji["ね"] = "ne";
+    romaji["の"] = "no";
+    romaji["は"] = "ha";
+    romaji["ひ"] = "hi";
+    romaji["ふ"] = "fu";
+    romaji["へ"] = "he";
+    romaji["ほ"] = "ho";
+    romaji["ま"] = "ma";
+    romaji["み"] = "mi";
+    romaji["む"] = "mu";
+    romaji["め"] = "me";
+    romaji["も"] = "mo";
+    romaji["や"] = "ya";
+    romaji["ゆ"] = "yu";
+    romaji["よ"] = "yo";
+    romaji["ら"] = "ra";
+    romaji["り"] = "ri";
+    romaji["る"] = "ru";
+    romaji["れ"] = "re";
+    romaji["ろ"] = "ro";
+    romaji["わ"] = "wa";
+    romaji["ゐ"] = "wi";
+    romaji["ゑ"] = "we";
+    romaji["を"] = "wo";
+    romaji["ん"] = "n";
+    
+    romaji["ぁ"] = "\1a";
+    romaji["ぃ"] = "\1i";
+    romaji["ぇ"] = "\1e";
+    romaji["ぉ"] = "\1o";
+    romaji["ゃ"] = "\1ya";
+    romaji["ゅ"] = "\1yu";
+    romaji["ょ"] = "\1yo";
+    romaji["っ"] = "\2";
+
+    romaji["ゔ"] = "vu";
+    romaji["が"] = "ga";
+    romaji["ぎ"] = "gi";
+    romaji["ぐ"] = "gu";
+    romaji["げ"] = "ge";
+    romaji["ご"] = "go";
+    romaji["ざ"] = "za";
+    romaji["じ"] = "ji";
+    romaji["ず"] = "zu";
+    romaji["ぜ"] = "ze";
+    romaji["ぞ"] = "zo";
+    romaji["だ"] = "da";
+    romaji["ぢ"] = "dzi";
+    romaji["づ"] = "dzu";
+    romaji["で"] = "de";
+    romaji["ど"] = "do";
+    romaji["ば"] = "ba";
+    romaji["び"] = "bi";
+    romaji["ぶ"] = "bu";
+    romaji["べ"] = "be";
+    romaji["ぼ"] = "bo";
+    romaji["ぱ"] = "pa";
+    romaji["ぴ"] = "pi";
+    romaji["ぷ"] = "pu";
+    romaji["ぺ"] = "pe";
+    romaji["ぽ"] = "po";
+
+    // -- katakana -----
+    romaji["ア"] = "a";
+    romaji["イ"] = "i";
+    romaji["ウ"] = "u";
+    romaji["エ"] = "e";
+    romaji["オ"] = "o";    
+    romaji["カ"] = "ka";
+    romaji["キ"] = "ki";
+    romaji["ク"] = "ku";
+    romaji["ケ"] = "ke";
+    romaji["コ"] = "ko";
+    romaji["サ"] = "sa";
+    romaji["シ"] = "shi";
+    romaji["ス"] = "su";
+    romaji["セ"] = "se";
+    romaji["ソ"] = "so";
+    romaji["タ"] = "ta";
+    romaji["チ"] = "chi";
+    romaji["ツ"] = "tsu";
+    romaji["テ"] = "te";
+    romaji["ト"] = "to";
+    romaji["ナ"] = "na";
+    romaji["ニ"] = "ni";
+    romaji["ヌ"] = "nu";
+    romaji["ネ"] = "ne";
+    romaji["ノ"] = "no";
+    romaji["ハ"] = "ha";
+    romaji["ヒ"] = "hi";
+    romaji["フ"] = "fu";
+    romaji["ヘ"] = "he";
+    romaji["ホ"] = "ho";
+    romaji["マ"] = "ma";
+    romaji["ミ"] = "mi";
+    romaji["ム"] = "mu";
+    romaji["メ"] = "me";
+    romaji["モ"] = "mo";
+    romaji["ヤ"] = "ya";
+    romaji["ユ"] = "yu";
+    romaji["ヨ"] = "yo";
+    romaji["ラ"] = "ra";
+    romaji["リ"] = "ri";
+    romaji["ル"] = "ru";
+    romaji["レ"] = "re";
+    romaji["ロ"] = "ro";
+    romaji["ワ"] = "wa";
+    romaji["ヰ"] = "wi";
+    romaji["ヱ"] = "we";
+    romaji["ヲ"] = "wo";
+    romaji["ン"] = "n";
+    
+    romaji["ァ"] = "\1a";
+    romaji["ィ"] = "\1i";
+    romaji["ゥ"] = "\1u";
+    romaji["ェ"] = "\1e";
+    romaji["ォ"] = "\1o";
+    romaji["ヮ"] = "\1wa";
+    romaji["ャ"] = "\1ya";
+    romaji["ュ"] = "\1yu";
+    romaji["ョ"] = "\1yo";
+    romaji["ッ"] = "\2";
+
+    romaji["ヴ"] = "vu";
+    romaji["ガ"] = "ga";
+    romaji["ギ"] = "gi";
+    romaji["グ"] = "gu";
+    romaji["ゲ"] = "ge";
+    romaji["ゴ"] = "go";
+    romaji["ザ"] = "za";
+    romaji["ジ"] = "ji";
+    romaji["ズ"] = "zu";
+    romaji["ゼ"] = "ze";
+    romaji["ゾ"] = "zo";
+    romaji["ダ"] = "da";
+    romaji["ヂ"] = "dzi";
+    romaji["ヅ"] = "dzu";
+    romaji["デ"] = "de";
+    romaji["ド"] = "do";
+    romaji["バ"] = "ba";
+    romaji["ビ"] = "bi";
+    romaji["ブ"] = "bu";
+    romaji["ベ"] = "be";
+    romaji["ボ"] = "bo";
+    romaji["パ"] = "pa";
+    romaji["ピ"] = "pi";
+    romaji["プ"] = "pu";
+    romaji["ペ"] = "pe";
+    romaji["ポ"] = "po";
+    romaji["ー"] = "";
+    
+    // -- double width letters ------
+    romaji["Ａ"] = "A";
+    romaji["Ｂ"] = "B";
+    romaji["Ｃ"] = "C";
+    romaji["Ｄ"] = "D";
+    romaji["Ｅ"] = "E";
+    romaji["Ｆ"] = "F";
+    romaji["Ｇ"] = "G";
+    romaji["Ｈ"] = "H";
+    romaji["Ｉ"] = "I";
+    romaji["Ｊ"] = "J";
+    romaji["Ｋ"] = "K";
+    romaji["Ｌ"] = "L";
+    romaji["Ｍ"] = "M";
+    romaji["Ｎ"] = "N";
+    romaji["Ｏ"] = "O";
+    romaji["Ｐ"] = "P";
+    romaji["Ｑ"] = "Q";
+    romaji["Ｒ"] = "R";
+    romaji["Ｓ"] = "S";
+    romaji["Ｔ"] = "T";
+    romaji["Ｕ"] = "U";
+    romaji["Ｖ"] = "V";
+    romaji["Ｗ"] = "W";
+    romaji["Ｘ"] = "X";
+    romaji["Ｙ"] = "Y";
+    romaji["Ｚ"] = "Z";
+
+    romaji["ａ"] = "a";
+    romaji["ｂ"] = "b";
+    romaji["ｃ"] = "c";
+    romaji["ｄ"] = "d";
+    romaji["ｅ"] = "e";
+    romaji["ｆ"] = "f";
+    romaji["ｇ"] = "g";
+    romaji["ｈ"] = "h";
+    romaji["ｉ"] = "i";
+    romaji["ｊ"] = "j";
+    romaji["ｋ"] = "k";
+    romaji["ｌ"] = "l";
+    romaji["ｍ"] = "m";
+    romaji["ｎ"] = "n";
+    romaji["ｏ"] = "o";
+    romaji["ｐ"] = "p";
+    romaji["ｑ"] = "q";
+    romaji["ｒ"] = "r";
+    romaji["ｓ"] = "s";
+    romaji["ｔ"] = "t";
+    romaji["ｕ"] = "u";
+    romaji["ｖ"] = "v";
+    romaji["ｗ"] = "w";
+    romaji["ｘ"] = "x";
+    romaji["ｙ"] = "y";
+    romaji["ｚ"] = "z";
+
+    romaji["０"] = "0";
+    romaji["１"] = "1";
+    romaji["２"] = "2";
+    romaji["３"] = "3";
+    romaji["４"] = "4";
+    romaji["５"] = "5";
+    romaji["６"] = "6";
+    romaji["７"] = "7";
+    romaji["８"] = "8";
+    romaji["９"] = "9";
+   
+    romaji["！"] = "!";
+    romaji["＂"] = "\"";
+    romaji["＃"] = "#";
+    romaji["＄"] = "$";
+    romaji["％"] = "%";
+    romaji["＆"] = "&";
+    romaji["＇"] = "'"; // TODO:
+    romaji["（"] = "(";
+    romaji["）"] = ")";
+    romaji["＊"] = "*";
+    romaji["＋"] = "+";
+    romaji["，"] = ",";
+    romaji["－"] = "-";
+    romaji["．"] = ".";
+    romaji["／"] = "/";
+
+    romaji["："] = ":";
+    romaji["；"] = ";";
+    romaji["＜"] = "<";
+    romaji["＝"] = "=";
+    romaji["＞"] = ">";
+    romaji["？"] = "?";
+    romaji["＠"] = "@";
+
+    romaji["［"] = "[";
+    romaji["＼"] = "\\";
+    romaji["］"] = "]";
+    romaji["＾"] = "^";
+    romaji["＿"] = "_";
+    romaji["｀"] = "`";
+
+    romaji["｛"] = "{";
+    romaji["｜"] = "|";
+    romaji["｝"] = "}";
+    romaji["～"] = "~";
+
+
+    // don't know where those belong to
+    romaji["〜"] = "~";
+    romaji["、"] = ","; // TODO:
+    romaji["−"] = "-";
+    
+    romaji["　"] = " ";
+    romaji["―"] = "-";
+    romaji["・"] = "-"; // FIXME
+}
+
+void kana2romaji(const string& kana, string& rom) {
+    rom.clear();
+    for (string::size_type pos = 0; pos < kana.size(); ) {
+	string ch;
+        utfchar(kana, pos, ch);
+        romaji_map::const_iterator trans = romaji.find(ch);
+        if (trans == romaji.end()) {
+            rom += ch;
+            if (ch.size() > 1)
+                cout << "Don't know how to translate '" << ch << "' in '" << kana << "' to romaji." << endl;
+        }
+        else
+            rom += trans->second;
+        pos += ch.size();
+    }
+    for (string::size_type pos = 0; pos < rom.size(); ++pos)
+        if (rom[pos] == '\1') {
+		string::size_type from = pos, count = 1;
+            if (pos > 1 && (rom[pos - 2] == 'h' || rom[pos - 2] == 'j')) {
+                --from;
+                count = (pos + 1 < rom.size() && rom[pos + 1] == 'y') ? 3 : 2;
+            }
+            rom.erase(from, count);
+        }
+        else if (rom[pos] == '\2' && pos + 1 < rom.size())
+            rom[pos] = rom[pos + 1];
+}
