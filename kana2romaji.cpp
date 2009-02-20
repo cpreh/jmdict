@@ -414,6 +414,11 @@ void kana2romaji(const string& kana, string& rom) {
                   continue;
                }
             }
+            else
+            {
+              cout << "Encountered a placeholder at the beginning. Just removing it." << endl;
+              rom.erase(pos);
+            }
         }
         // FIXME!
         else if (rom[pos] == '\2' && pos + 1 < rom.size())
