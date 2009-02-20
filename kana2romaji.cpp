@@ -387,6 +387,7 @@ void kana2romaji(const string& kana, string& rom) {
                   pred == "ri" ||
                   pred == "gi" ||
                   pred == "ji" ||
+                  pred == "hi" ||
                   pred == "bi" ||
                   pred == "pi"
                 )
@@ -421,6 +422,9 @@ void kana2romaji(const string& kana, string& rom) {
             }
         }
         // FIXME!
-        else if (rom[pos] == '\2' && pos + 1 < rom.size())
+        else if (rom[pos] == '\2')
+	{
+          if(pos + 1 < rom.size())
             rom[pos] = rom[pos + 1];
+        }
 }
