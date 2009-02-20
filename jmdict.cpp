@@ -51,10 +51,6 @@ namespace options {
     bool beginning = false;
     bool ci_search = false;
 
-    class invalid_option : public std::runtime_error {
-	    invalid_option(const string& s) : std::runtime_error(s) {}
-    };
-
     void getFrom(int argc, char** argv) {
         int opt;
         while ((opt = getopt(argc, argv, "bfijJl:")) != -1)
