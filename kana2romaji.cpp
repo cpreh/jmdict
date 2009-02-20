@@ -34,8 +34,8 @@ void utfchar(const string& from, string::size_type pos, string& to) {
         string::size_type len = 0;
         while (first & 0x80) {
             ++len;
-	    first <<= 1;
-	}
+            first <<= 1;
+        }
         to = from.substr(pos, len);
     }
 }
@@ -336,7 +336,7 @@ void initRomaji() {
 void kana2romaji(const string& kana, string& rom) {
     rom.clear();
     for (string::size_type pos = 0; pos < kana.size(); ) {
-	string ch;
+        string ch;
         utfchar(kana, pos, ch);
         romaji_map::const_iterator trans = romaji.find(ch);
         if (trans == romaji.end()) {
@@ -350,12 +350,47 @@ void kana2romaji(const string& kana, string& rom) {
     }
     for (string::size_type pos = 0; pos < rom.size(); ++pos)
         if (rom[pos] == '\1') {
-		string::size_type from = pos, count = 1;
-            if (pos > 1 && (rom[pos - 2] == 'h' || rom[pos - 2] == 'j')) {
-                --from;
-                count = (pos + 1 < rom.size() && rom[pos + 1] == 'y') ? 3 : 2;
+            string::size_type count = 1;
+
+            if (pos > 2) {
+               string const pred = rom.substr(pos - 3, 3);
+               if(pred == "chi" ||
+                  pred == "shi" ||
+                  pred == "dzi"
+               ) {
+                 count = (pos + 1 < rom.size() && rom[pos + 1] == 'y') ? 3 : 2;
+                 rom.erase(pos - 1, count);
+                 continue;
+               }
             }
-            rom.erase(from, count);
+            if (pos > 1) {
+             
+               string const pred = rom.substr(pos - 2, 2);
+               if(pred == "ki" ||
+                  pred == "ni" ||
+                  pred == "mi" ||
+                  pred == "ri" ||
+                  pred == "gi" ||
+                  pred == "ji" ||
+                  pred == "bi" ||
+                  pred == "pi"
+                )
+               {
+                  count = (pos + 1 < rom.size() && rom[pos + 1] == 'y') ? 3 : 2;
+                  rom.erase(pos - 1, count);
+                  continue;
+               }
+                
+                if(pred == "fu" ||
+                   pred == "de" ||
+                   pred == "te" ||
+                   pred == "vu")
+                {
+                  count = (pos + 1 < rom.size() && rom[pos + 1] == 'y') ? 3 : 2;
+                  rom.erase(pos - 1, count);
+                  continue;
+                }
+            }
         }
         else if (rom[pos] == '\2' && pos + 1 < rom.size())
             rom[pos] = rom[pos + 1];
