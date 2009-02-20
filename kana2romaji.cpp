@@ -376,7 +376,7 @@ void kana2romaji(const string& kana, string& rom) {
                   pred == "pi"
                 )
                {
-                  count = (pos + 1 < rom.size() && rom[pos + 1] == 'y') ? 3 : 2;
+                  count = (pos + 1 < rom.size() && rom[pos + 1] == 'y' && pred[0] == 'j') ? 3 : 2;
                   rom.erase(pos - 1, count);
                   continue;
                }
