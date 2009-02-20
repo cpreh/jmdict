@@ -333,6 +333,23 @@ void initRomaji() {
     romaji["・"] = "-"; // FIXME
 }
 
+void remove_quote_1(
+  string::size_type const pos,
+  string &rom)
+{
+  // if we encounter something like
+  // "ki" + '\1' 
+  // remove the previous character of \1 and the \1
+  // if \1 is followed by an 'y' remove that also
+  rom.erase(
+    pos - 1,
+    (pos + 1 < rom.size()
+     && rom[pos + 1] == 'y'
+    )
+      ? 3
+      : 2);
+}
+
 void kana2romaji(const string& kana, string& rom) {
     rom.clear();
     for (string::size_type pos = 0; pos < kana.size(); ) {
@@ -350,7 +367,6 @@ void kana2romaji(const string& kana, string& rom) {
     }
     for (string::size_type pos = 0; pos < rom.size(); ++pos)
         if (rom[pos] == '\1') {
-            string::size_type count = 1;
 
             if (pos > 2) {
                string const pred = rom.substr(pos - 3, 3);
@@ -358,12 +374,11 @@ void kana2romaji(const string& kana, string& rom) {
                   pred == "shi" ||
                   pred == "dzi"
                ) {
-                 count = (pos + 1 < rom.size() && rom[pos + 1] == 'y') ? 3 : 2;
-                 rom.erase(pos - 1, count);
+                 remove_quote_1(pos, rom);
                  continue;
                }
             }
-            if (pos > 1) {
+            else if (pos > 1) {
              
                string const pred = rom.substr(pos - 2, 2);
                if(pred == "ki" ||
@@ -376,22 +391,31 @@ void kana2romaji(const string& kana, string& rom) {
                   pred == "pi"
                 )
                {
-                  count = (pos + 1 < rom.size() && rom[pos + 1] == 'y' && pred[0] == 'j') ? 3 : 2;
-                  rom.erase(pos - 1, count);
+                 // shorten "ji\1y" to "j"
+                 // otherwise remove "\1" and the preceding character
+                 // but not the y
+                  rom.erase(
+                    pos - 1,
+                    (pos + 1 < rom.size()
+                     && rom[pos + 1] == 'y'
+                     && pred[0] == 'j')
+                       ? 3
+                       : 2);
+
                   continue;
                }
-                
-                if(pred == "fu" ||
-                   pred == "de" ||
-                   pred == "te" ||
-                   pred == "vu")
-                {
-                  count = (pos + 1 < rom.size() && rom[pos + 1] == 'y') ? 3 : 2;
-                  rom.erase(pos - 1, count);
+               
+               if(pred == "fu" ||
+                  pred == "de" ||
+                  pred == "te" ||
+                  pred == "vu")
+               {
+                  remove_quote_1(pos, rom);
                   continue;
-                }
+               }
             }
         }
+        // FIXME!
         else if (rom[pos] == '\2' && pos + 1 < rom.size())
             rom[pos] = rom[pos + 1];
 }
