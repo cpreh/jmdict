@@ -27,7 +27,7 @@ using namespace std;
 
 namespace  {
 void utfchar(const string& from, string::size_type pos, string& to) {
-    string::value_type first = from[pos];
+    unsigned first = from[pos];
     if ((first & 0x80) == 0)
         to = from[pos];
     else {

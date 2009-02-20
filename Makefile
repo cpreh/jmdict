@@ -1,6 +1,6 @@
 PREFIX ?= /usr
 
-OPTS=-Wall -Wextra -ansi -pedantic-errors $(CXXFLAGS)
+OPTS=-Wall -Wextra -ansi -pedantic-errors -Wconversion $(CXXFLAGS)
 DICTIONARY_PATH=$(PREFIX)/share/jmdict
 DICTIONARY_NAME="\"$(DICTIONARY_PATH)/database\""
 BINDIR=${DESTDIR}${PREFIX}/bin

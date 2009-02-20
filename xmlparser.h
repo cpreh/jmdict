@@ -80,7 +80,7 @@ public:
         while (in) {
             char* buffer = static_cast<char*>(XML_GetBuffer(m_parser, BLOCK_SIZE));
             in.read(buffer, BLOCK_SIZE);
-            XML_ParseBuffer(m_parser, in.gcount(), in.eof());
+            XML_ParseBuffer(m_parser, static_cast<int>(in.gcount()), in.eof());
         }
     }
 
