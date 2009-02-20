@@ -387,6 +387,7 @@ void kana2romaji(const string& kana, string& rom) {
                   pred == "ri" ||
                   pred == "gi" ||
                   pred == "ji" ||
+                  pred == "hi" ||
                   pred == "bi" ||
                   pred == "pi"
                 )
