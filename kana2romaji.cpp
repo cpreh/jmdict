@@ -417,7 +417,6 @@ void kana2romaji(const string& kana, string& rom) {
             }
             else
             {
-              cout << "Encountered a placeholder at the beginning. Just removing it." << endl;
               rom.erase(pos);
             }
         }
@@ -426,5 +425,7 @@ void kana2romaji(const string& kana, string& rom) {
 	{
           if(pos + 1 < rom.size())
             rom[pos] = rom[pos + 1];
+	  else
+            rom.erase(pos);
         }
 }
