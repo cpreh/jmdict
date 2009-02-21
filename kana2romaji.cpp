@@ -218,7 +218,7 @@ void initRomaji() {
     romaji["プ"] = "pu";
     romaji["ペ"] = "pe";
     romaji["ポ"] = "po";
-    romaji["ー"] = "";
+    romaji["・"] = " ";
     
     // -- double width letters ------
     romaji["Ａ"] = "A";
@@ -292,9 +292,7 @@ void initRomaji() {
     romaji["＄"] = "$";
     romaji["％"] = "%";
     romaji["＆"] = "&";
-    romaji["＇"] = "'"; // TODO:
-    romaji["（"] = "(";
-    romaji["）"] = ")";
+    romaji["＇"] = "'";
     romaji["＊"] = "*";
     romaji["＋"] = "+";
     romaji["，"] = ",";
@@ -310,27 +308,29 @@ void initRomaji() {
     romaji["？"] = "?";
     romaji["＠"] = "@";
 
+    romaji["〔"] = "(";
+    romaji["〕"] = ")";
+    romaji["（"] = "(";
+    romaji["）"] = ")";
     romaji["［"] = "[";
-    romaji["＼"] = "\\";
     romaji["］"] = "]";
+    romaji["【"] = "[";
+    romaji["】"] = "]";
+    romaji["｛"] = "{";
+    romaji["｝"] = "}";
+    romaji["＼"] = "\\";
     romaji["＾"] = "^";
     romaji["＿"] = "_";
     romaji["｀"] = "`";
-
-    romaji["｛"] = "{";
     romaji["｜"] = "|";
-    romaji["｝"] = "}";
     romaji["～"] = "~";
-
-
-    // don't know where those belong to
+    romaji["ー"] = "-";
+    romaji["。"] = ".";
+    romaji["、"] = ",";
     romaji["〜"] = "~";
-    romaji["、"] = ","; // TODO:
     romaji["−"] = "-";
-    
-    romaji["　"] = " ";
     romaji["―"] = "-";
-    romaji["・"] = "-"; // FIXME
+    romaji["　"] = " ";
 }
 
 void remove_quote_1(
@@ -375,7 +375,7 @@ void kana2romaji(const string& kana, string& rom) {
                   pred == "dzi"
                ) {
                  remove_quote_1(pos, rom);
-                 continue;
+                 pos -= 2;
                }
             }
             else if (pos > 1) {
@@ -395,33 +395,39 @@ void kana2romaji(const string& kana, string& rom) {
                  // shorten "ji\1y" to "j"
                  // otherwise remove "\1" and the preceding character
                  // but not the y
-                  rom.erase(
-                    pos - 1,
-                    (pos + 1 < rom.size()
-                     && rom[pos + 1] == 'y'
-                     && pred[0] == 'j')
-                       ? 3
-                       : 2);
-
-                  continue;
+                 rom.erase(
+                   pos - 1,
+                   (pos + 1 < rom.size()
+                    && rom[pos + 1] == 'y'
+                    && pred[0] == 'j')
+                      ? 3
+                      : 2);
+                  pos -= 2;
                }
-               
-               if(pred == "fu" ||
+               else if(
+                  pred == "fu" ||
                   pred == "de" ||
                   pred == "te" ||
                   pred == "vu")
                {
                   remove_quote_1(pos, rom);
-                  continue;
+                  pos -= 2;
                }
             }
             else
             {
-              cout << "Encountered a placeholder at the beginning. Just removing it." << endl;
               rom.erase(pos);
+              --pos;
             }
         }
-        // FIXME!
-        else if (rom[pos] == '\2' && pos + 1 < rom.size())
+        else if (rom[pos] == '\2')
+        {
+          if(pos + 1 < rom.size())
             rom[pos] = rom[pos + 1];
+          else
+          {
+            rom.erase(pos);
+            --pos;
+          }
+        }
 }
