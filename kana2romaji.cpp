@@ -218,7 +218,6 @@ void initRomaji() {
     romaji["プ"] = "pu";
     romaji["ペ"] = "pe";
     romaji["ポ"] = "po";
-    romaji["ー"] = "";
     
     // -- double width letters ------
     romaji["Ａ"] = "A";
@@ -292,9 +291,7 @@ void initRomaji() {
     romaji["＄"] = "$";
     romaji["％"] = "%";
     romaji["＆"] = "&";
-    romaji["＇"] = "'"; // TODO:
-    romaji["（"] = "(";
-    romaji["）"] = ")";
+    romaji["＇"] = "'";
     romaji["＊"] = "*";
     romaji["＋"] = "+";
     romaji["，"] = ",";
@@ -310,24 +307,29 @@ void initRomaji() {
     romaji["？"] = "?";
     romaji["＠"] = "@";
 
+    romaji["〔"] = "(";
+    romaji["〕"] = ")";
+    romaji["（"] = "(";
+    romaji["）"] = ")";
     romaji["［"] = "[";
-    romaji["＼"] = "\\";
     romaji["］"] = "]";
+    romaji["【"] = "[";
+    romaji["】"] = "]";
+    romaji["｛"] = "{";
+    romaji["｝"] = "}";
+    romaji["＼"] = "\\";
     romaji["＾"] = "^";
     romaji["＿"] = "_";
     romaji["｀"] = "`";
-
-    romaji["｛"] = "{";
     romaji["｜"] = "|";
-    romaji["｝"] = "}";
     romaji["～"] = "~";
-
+    romaji["ー"] = "-";
+    romaji["。"] = ".";
+    romaji["、"] = ",";
+    romaji["〜"] = "~";
 
     // don't know where those belong to
-    romaji["〜"] = "~";
-    romaji["、"] = ","; // TODO:
     romaji["−"] = "-";
-    
     romaji["　"] = " ";
     romaji["―"] = "-";
     romaji["・"] = "-"; // FIXME
