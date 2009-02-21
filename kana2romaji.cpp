@@ -218,6 +218,7 @@ void initRomaji() {
     romaji["プ"] = "pu";
     romaji["ペ"] = "pe";
     romaji["ポ"] = "po";
+    romaji["・"] = " ";
     
     // -- double width letters ------
     romaji["Ａ"] = "A";
@@ -327,12 +328,9 @@ void initRomaji() {
     romaji["。"] = ".";
     romaji["、"] = ",";
     romaji["〜"] = "~";
-
-    // don't know where those belong to
     romaji["−"] = "-";
-    romaji["　"] = " ";
     romaji["―"] = "-";
-    romaji["・"] = "-"; // FIXME
+    romaji["　"] = " ";
 }
 
 void remove_quote_1(
