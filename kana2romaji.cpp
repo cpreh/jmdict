@@ -376,9 +376,10 @@ void kana2romaji(const string& kana, string& rom) {
                ) {
                  remove_quote_1(pos, rom);
                  pos -= 2;
+                 continue;
                }
             }
-            else if (pos > 1) {
+            if (pos > 1) {
              
                string const pred = rom.substr(pos - 2, 2);
                if(pred == "ki" ||
