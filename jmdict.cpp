@@ -151,7 +151,6 @@ void guessLanguage(const std::string& subject) {
         options::source = options::JAPANESE_ROMAJI;
     else if (options::source == options::UNKNOWN)
         options::source = isUTF8 ? options::JAPANESE : options::NOT_JAPANESE;
-		//options::source = options::JAPANESE_ROMAJI;
 }
 
 int main(int argc, char** argv)
