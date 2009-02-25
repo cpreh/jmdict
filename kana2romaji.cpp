@@ -324,7 +324,7 @@ void initRomaji() {
     romaji["｀"] = "`";
     romaji["｜"] = "|";
     romaji["～"] = "~";
-    romaji["ー"] = "-";
+    romaji["ー"] = "";
     romaji["。"] = ".";
     romaji["、"] = ",";
     romaji["〜"] = "~";
