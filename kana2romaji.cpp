@@ -331,6 +331,8 @@ void initRomaji() {
     romaji["−"] = "-";
     romaji["―"] = "-";
     romaji["　"] = " ";
+
+    romaji["ー"] = "\3";
 }
 
 void remove_quote_1(
@@ -359,7 +361,7 @@ void kana2romaji(const string& kana, string& rom) {
         if (trans == romaji.end()) {
             rom += ch;
             if (ch.size() > 1)
-                cout << "Don't know how to translate '" << ch << "' in '" << kana << "' to romaji." << endl;
+                cout << "Don't know how to translate '" << ch << "' in '" << kana << "' to romaji.\n";
         }
         else
             rom += trans->second;
@@ -430,5 +432,16 @@ void kana2romaji(const string& kana, string& rom) {
             rom.erase(pos);
             --pos;
           }
+        }
+        else if (rom[pos] == '\3')
+        {
+          if(pos == 0)
+          {
+            cout << "ー is the first letter of a word. Don't know how to translate this.\n";
+            rom.erase(pos);
+            --pos;
+          }
+          else
+            rom[pos] = rom[pos-1];
         }
 }
