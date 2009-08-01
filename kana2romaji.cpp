@@ -408,6 +408,7 @@ void kana2romaji(const string& kana, string& rom) {
                       ? 3
                       : 2);
                   pos -= 2;
+                 continue;
                }
                else if(
                   pred == "fu" ||
@@ -417,6 +418,7 @@ void kana2romaji(const string& kana, string& rom) {
                {
                   remove_quote_1(pos, rom);
                   pos -= 2;
+                 continue;
                }
                else if(
                  pred == "su" ||
@@ -430,6 +432,8 @@ void kana2romaji(const string& kana, string& rom) {
                {
                  rom[pos - 1] = 'w'; 
                  rom.erase(pos);
+                 --pos;
+                 continue;
                }
                else if(
                  pred == "to" ||
@@ -438,11 +442,27 @@ void kana2romaji(const string& kana, string& rom) {
                {
                  rom[pos - 1] = 'h';
                  rom.erase(pos);
+                 --pos;
+                 continue;
                }
-               else
-               {
-                 cout << "Encountered a special character in " << kana << " but don't know what to do with it.\n";
-               }
+            }
+
+            if (pos > 0) {
+              char const pred = rom[pos - 1];
+
+              switch(pred)
+              {
+              case 'a':
+              case 'i':
+              case 'u':
+              case 'e':
+              case 'o':
+                rom.erase(pos);
+                --pos;
+                continue;
+              default:
+                cout << "Encountered a special character in " << kana << " but don't know what to do with it.\n";
+              }
             }
             else
             {
