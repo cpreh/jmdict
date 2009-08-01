@@ -431,7 +431,7 @@ void kana2romaji(const string& kana, string& rom) {
                )
                {
                  rom[pos - 1] = 'w'; 
-                 rom.erase(pos);
+                 rom.erase(pos, 1);
                  --pos;
                  continue;
                }
@@ -441,7 +441,7 @@ void kana2romaji(const string& kana, string& rom) {
                )
                {
                  rom[pos - 1] = 'h';
-                 rom.erase(pos);
+                 rom.erase(pos, 1);
                  --pos;
                  continue;
                }
@@ -457,26 +457,27 @@ void kana2romaji(const string& kana, string& rom) {
               case 'u':
               case 'e':
               case 'o':
-                rom.erase(pos);
+                rom.erase(pos, 1);
                 --pos;
-                continue;
+                break;
               default:
                 cout << "Encountered a special character in " << kana << " but don't know what to do with it.\n";
               }
             }
             else
             {
-              rom.erase(pos);
+              rom.erase(pos, 1);
               --pos;
             }
         }
         else if (rom[pos] == '\2')
         {
-          if(pos + 1 < rom.size())
+	  // two tsu may follow each other, so just remove them
+          if(pos + 1 < rom.size() && rom[pos + 1] != '\2')
             rom[pos] = rom[pos + 1];
           else
           {
-            rom.erase(pos);
+            rom.erase(pos, 1);
             --pos;
           }
         }
@@ -484,11 +485,26 @@ void kana2romaji(const string& kana, string& rom) {
         {
           if(pos == 0)
           {
-            cout << "ー is the first letter of " << kana << ". Don't know how to translate this.\n";
-            rom.erase(pos);
-            --pos;
+            if(rom.size() == 1)
+              rom = "chouon";
+            else
+            {
+              cout << "ー is the first letter of " << kana << ". Don't know how to translate this.\n";
+              rom.erase(pos, 1);
+              --pos;
+            }
           }
           else
             rom[pos] = rom[pos-1];
         }
+
+  for (string::size_type pos = 0; pos < rom.size(); ++pos)
+    switch(rom[pos])
+    {
+    case '\1':
+    case '\2':
+    case '\3':
+      cout << "Failed to translate " << kana << '\n';
+      return;
+    }
 }

@@ -34,7 +34,7 @@ public:
     Dictionary(const string& name) : db(name) {
         db.exec("DROP TABLE kanji");
         db.exec("DROP TABLE reading");
-	db.exec("DROP TABLE gloss");
+        db.exec("DROP TABLE gloss");
         db.exec("CREATE TABLE kanji (entry INT NOT NULL, kanji TINYTEXT NOT NULL)");
         db.exec("CREATE TABLE reading (entry INT NOT NULL, kana TINYTEXT NOT NULL, romaji TINYTEXT NOT NULL)");
         db.exec("CREATE TABLE gloss (entry INT NOT NULL, sense INT NOT NULL, lang TINYTEXT NOT NULL, gloss TEXT NOT NULL)");
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 try {
     if(argc < 2 || argc > 3) {
         cerr << "Usage: jmdict_import <dictfile> [dest_dir]\n";
-	return EXIT_FAILURE;
+        return EXIT_FAILURE;
     }
     
     const string dict_file = argv[1],
