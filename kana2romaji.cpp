@@ -374,7 +374,9 @@ void kana2romaji(const string& kana, string& rom) {
                string const pred = rom.substr(pos - 3, 3);
                if(pred == "chi" ||
                   pred == "shi" ||
-                  pred == "dzi"
+                  pred == "dzi" ||
+                  pred == "tsu" ||
+                  pred == "shi"
                ) {
                  remove_quote_1(pos, rom);
                  pos -= 2;
@@ -416,6 +418,31 @@ void kana2romaji(const string& kana, string& rom) {
                   remove_quote_1(pos, rom);
                   pos -= 2;
                }
+               else if(
+                 pred == "su" ||
+                 pred == "zu" ||
+                 pred == "te" ||
+                 pred == "de" ||
+                 pred == "ku" ||
+                 pred == "gu" ||
+                 pred == "mu"
+               )
+               {
+                 rom[pos - 1] = 'w'; 
+                 rom.erase(pos);
+               }
+               else if(
+                 pred == "to" ||
+                 pred == "do"
+               )
+               {
+                 rom[pos - 1] = 'h';
+                 rom.erase(pos);
+               }
+               else
+               {
+                 cout << "Encountered a special character in " << kana << " but don't know what to do with it.\n";
+               }
             }
             else
             {
@@ -437,7 +464,7 @@ void kana2romaji(const string& kana, string& rom) {
         {
           if(pos == 0)
           {
-            cout << "ー is the first letter of a word. Don't know how to translate this.\n";
+            cout << "ー is the first letter of " << kana << ". Don't know how to translate this.\n";
             rom.erase(pos);
             --pos;
           }
