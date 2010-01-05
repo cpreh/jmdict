@@ -33,6 +33,7 @@ void usage() {
             "  -b        search for entries beginning with <subject>\n"
             "  -f        perform a fulltext search\n"
             "  -i        case-insensitive search (implied by -b or -f)\n"
+            "  -r        also translate kana to romaji\n"
             "\n"
             "  -j        translate from japanese\n"
             "  -J        translate to japanese\n"
@@ -50,18 +51,20 @@ namespace options {
     bool fulltext = false;
     bool beginning = false;
     bool ci_search = false;
+    bool show_romaji = false;
 
     void getFrom(int argc, char** argv) {
         int opt;
-        while ((opt = getopt(argc, argv, "bfijJl:")) != -1)
+        while ((opt = getopt(argc, argv, "bfirjJl:")) != -1)
             switch (opt) {
                 case 'b':   beginning = true;       break;
                 case 'f':   fulltext = true;        break;
                 case 'i':   ci_search = true;       break;
+                case 'r':   show_romaji = true;     break;
                 case 'j':   source = JAPANESE;      break;
                 case 'J':   source = NOT_JAPANESE;  break;
                 case 'l':   target = optarg;        break;
-		case '?':   throw invalid_argument(string("unrecognized option"));
+                case '?':   throw invalid_argument(string("unrecognized option"));
             }
     }
 }
@@ -98,12 +101,19 @@ int showEntry(void*, int, char** value, char**) {
         sql::query("SELECT kana FROM reading WHERE entry=%s") % *value,
         accumulate, &kana);
 
-    string rom;
-    kana2romaji(kana,rom);
     if (kanji.size())
-        cout << kanji << " (" << kana << ") (" << rom << ')' << endl;
+        cout << kanji << " (" << kana << ')';
     else
-        cout << kana << " (" << rom << ')' << endl;
+        cout << kana;
+
+    if(options::show_romaji) {
+        string rom;
+        kana2romaji(kana,rom);
+
+        cout << " (" << rom << ')';
+    }
+
+    cout << endl;
     
     string sense;
     db->exec(
@@ -177,6 +187,6 @@ try {
 }
 catch(const std::exception& e)
 {
-	cerr << e.what() << '\n';
-	return EXIT_FAILURE;
+    cerr << e.what() << '\n';
+    return EXIT_FAILURE;
 }
