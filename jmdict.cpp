@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <stdexcept>
 #include <exception>
 #include <memory>
+#include <unistd.h>
 #include "sqlite.h"
 #include "kana2romaji.h"
 using namespace std;
