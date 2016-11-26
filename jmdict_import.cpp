@@ -37,7 +37,7 @@ public:
         db.exec("DROP TABLE gloss");
         db.exec("CREATE TABLE kanji (entry INT NOT NULL, kanji TINYTEXT NOT NULL)");
         db.exec("CREATE TABLE reading (entry INT NOT NULL, kana TINYTEXT NOT NULL, romaji TINYTEXT NOT NULL)");
-        db.exec("CREATE TABLE gloss (entry INT NOT NULL, sense INT NOT NULL, lang TINYTEXT NOT NULL, gloss TEXT NOT NULL)");
+        db.exec("CREATE TABLE gloss (entry INT NOT NULL, sense INT NOT NULL, pos TINYTEXT NOT NULL, lang TINYTEXT NOT NULL, gloss TEXT NOT NULL)");
         db.exec("BEGIN");
     }
 
@@ -67,6 +67,7 @@ public:
         if (tag.name() == "ent_seq") {
             entry_seq = atoi(tag.text().c_str());
             sense_seq = 1;
+            last_pos = "";
         }
         else if (tag.name() == "keb")
             insert_kanji(tag.text());
@@ -74,6 +75,8 @@ public:
             insert_reading(tag.text());
         else if (tag.name() == "sense")
             ++sense_seq;
+        else if (tag.name() == "pos")
+            last_pos = tag.text();
         else if (tag.name() == "gloss")
             insert_gloss(tag.attribute("xml:lang"), tag.text());
         tags.pop();
@@ -94,8 +97,8 @@ private:
         if (lang == "")
             lang = "en";
         db.exec(
-            sql::query("INSERT INTO gloss (entry, sense, lang, gloss) "
-                       "VALUES (%u, %u, %Q, %Q)") % entry_seq % sense_seq % lang % text);
+            sql::query("INSERT INTO gloss (entry, sense, pos, lang, gloss) "
+                       "VALUES (%u, %u, %Q, %Q, %Q)") % entry_seq % sense_seq % last_pos % lang % text);
 
         static unsigned seq = 0;
         if (++seq % 50000 == 0) {
@@ -107,6 +110,7 @@ private:
     stack<xml::Tag> tags;
     unsigned entry_seq;
     unsigned sense_seq;
+    string last_pos;
     sql::db db;
 };
 

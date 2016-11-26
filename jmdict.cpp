@@ -85,10 +85,9 @@ int showGloss(void* s, int, char** value, char**) {
     string& sense = *static_cast<string*>(s);
     if (sense != value[0]) {
         sense = value[0];
-        cout << "  " << setw(2) << sense << ")  ";
+        cout << "  " << setw(2) << sense << ")  " << "[" << value[2] << "]  " << endl;
     }
-    else
-        cout << "       ";
+    cout << "       ";
     cout << value[1] << endl;
     return 0;
 }
@@ -118,7 +117,7 @@ int showEntry(void*, int, char** value, char**) {
     
     string sense;
     db->exec(
-        sql::query("SELECT sense, gloss FROM gloss WHERE lang=%Q AND entry=%s "
+        sql::query("SELECT sense, gloss, pos FROM gloss WHERE lang=%Q AND entry=%s "
                    "ORDER BY sense") % options::target % *value,
         showGloss, &sense);
     ++entries;
